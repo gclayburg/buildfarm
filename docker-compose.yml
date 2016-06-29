@@ -19,5 +19,5 @@ jslavenode:
  volumes_from:
   - jslavedata
 jslavedata:
- build: jenkins-slavedata
+ build: jslave-data
 
