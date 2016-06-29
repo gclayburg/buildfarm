@@ -12,3 +12,12 @@ jenkinsnginx:
   - "80:80"
  links:
   - jenkinsmaster:jenkins-master
+jslavejava8:
+ build: jslave-java8
+jslavenode:
+ build: jslave-nodejs445
+ volumes_from:
+  - jslavedata
+jslavedata:
+ build: jenkins-slavedata
+

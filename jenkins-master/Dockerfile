@@ -19,6 +19,7 @@ RUN /usr/local/bin/plugins.sh /usr/share/jenkins/plugins.txt
 
 COPY executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy
 
+
 # Set Defaults
 #ENV JAVA_OPTS="-Xmx8192m"
 ENV JENKINS_OPTS="--handlerCountStartup=100 --handlerCountMax=300 --webroot=/var/cache/jenkins/war"
