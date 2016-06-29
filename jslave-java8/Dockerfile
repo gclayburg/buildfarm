@@ -1,8 +1,6 @@
-
 FROM java:8u91
+MAINTAINER Gary Clayburg
 
-# Add locales after locale-gen as needed
-# Upgrade packages on image
 # Preparations for sshd
 run apt-get -q update &&\
     DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew"  --no-install-recommends openssh-server &&\
