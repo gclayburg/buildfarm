@@ -9,6 +9,7 @@ RUN apt-get install -y curl
 RUN cd /tmp && curl -sL https://deb.nodesource.com/setup_4.x | bash && apt-get install -y nodejs  && apt-get install -y build-essential
 
 RUN npm install -g bower gulp
+RUN npm install -g npm
 
 # install maven 
 ENV MAVEN_VERSION 3.3.1
