@@ -8,6 +8,8 @@ clean:	stop
 	@docker-compose rm jenkinsmaster jenkinsnginx
 clean-data: clean
 	@docker-compose rm -v jenkinsdata
+clean-cache: clean
+	@docker-compose rm -v jslavedata
 clean-images:
 	@docker rmi $(docker images -q --filter="dangling=true")
 
