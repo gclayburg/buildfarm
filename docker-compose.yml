@@ -1,23 +1,37 @@
-jenkinsdata:
- build: jenkins-data
-jenkinsmaster:
- build: jenkins-master
- volumes_from:
-  - jenkinsdata
- ports:
-  - "50000:50000"
-jenkinsnginx:
- build: jenkins-nginx
- ports:
-  - "80:80"
- links:
-  - jenkinsmaster:jenkins-master
-jslavejava8:
- build: jslave-java8
-jslavenode:
- build: jslave-nodejs445
- volumes_from:
-  - jslavedata
-jslavedata:
- build: jslave-data
+version: '2'
+services:
+  jenkinsdata:
+   build: jenkins-data
+  jenkinsmaster:
+   build: jenkins-master
+   volumes_from:
+    - jenkinsdata
+   ports:
+    - "50000:50000"
+   links:
+    - sshcoderepo:ssh-coderepo
+  jenkinsnginx:
+   build: jenkins-nginx
+   ports:
+    - "80:80"
+   links:
+    - jenkinsmaster:jenkins-master
+  jslavejava8:
+   build: jslave-java8
+  jslavenode:
+   build: 
+     context: jslave-nodejs445
+     args:
+       DOCKER_GID: ${DOCKERGID}
+   volumes_from:
+    - jslavedata
+   volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  jslavedata:
+   build: jslave-data
+  sshcoderepo:
+   build: ssh-coderepo
+   ports:
+    - "2233:22"
+
 
