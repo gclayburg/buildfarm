@@ -30,8 +30,17 @@ services:
   jslavedata:
    build: jslave-data
   sshcoderepo:
-   build: ssh-coderepo
+   build: 
+     context: ssh-coderepo
    ports:
     - "2233:22"
+   volumes_from:
+    - sshdata
+  sshdata:
+   build: 
+     context: ssh-data
+     args:
+       BUILDFARM_HOST: ${BUILDFARM_HOSTNAME}
+
 
 

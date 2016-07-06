@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# we rely on docker-compse version 2 and its networking features here.  
-# buildfarm_jenkinsmaster_1 is both the container name created by docker-compose and visible as a hostname to this container
-
-#ssh-coderepo is a hostname visible on buildfarm_jenkinsmaster_1.  docker-compose added that hostname since buildfarm_jenkinsmaster_1 has a link to ssh-coderepo in docker-compose.yml
-
-curl http://buildfarm_jenkinsmaster_1:8080/git/notifyCommit?url=git@ssh-coderepo:/home/git/coderepo.git

@@ -8,7 +8,7 @@ RUN mkdir /home/jenkins/.ssh
 
 RUN chmod 700 /home/jenkins/.ssh
 COPY config /home/jenkins/.ssh/config 
-COPY jenkins-master-key.pub /home/jenkins/.ssh/authorized_keys
+COPY authorized_keys /home/jenkins/.ssh/authorized_keys
 USER root
 RUN chown jenkins:jenkins /home/jenkins/.ssh/*
 RUN chmod 600 /home/jenkins/.ssh/authorized_keys
