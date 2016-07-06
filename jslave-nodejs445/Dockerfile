@@ -12,7 +12,7 @@ RUN npm install -g bower gulp
 RUN npm install -g npm
 
 # install maven 
-ENV MAVEN_VERSION 3.3.1
+ENV MAVEN_VERSION 3.3.9
 RUN cd /usr/local; wget -O - http://mirrors.ibiblio.org/apache/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xvzf -
 RUN ln -sv /usr/local/apache-maven-$MAVEN_VERSION/bin/mvn /usr/local/bin/mvn
 
