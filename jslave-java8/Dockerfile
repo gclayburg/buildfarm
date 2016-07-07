@@ -7,11 +7,11 @@ run apt-get -q update &&\
     apt-get -q autoremove &&\
     apt-get -q clean -y && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin &&\
     sed -i 's|session    required     pam_loginuid.so|session    optional     pam_loginuid.so|g' /etc/pam.d/sshd &&\
-    mkdir -p /var/run/sshd
-
+    mkdir -p /var/run/sshd &&\
 # Set user jenkins to the image
-RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
-    echo "jenkins:jenkins" | chpasswd
+    useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
+    echo "jenkins:jenkins" | chpasswd &&\
+    echo "America/Denver" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
 
 # Standard SSH port
 EXPOSE 22

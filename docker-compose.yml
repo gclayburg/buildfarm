@@ -10,12 +10,16 @@ services:
     - "50000:50000"
    links:
     - sshcoderepo:ssh-coderepo
+   environment:
+    - "TZ=America/Denver"
   jenkinsnginx:
    build: jenkins-nginx
    ports:
     - "80:80"
    links:
     - jenkinsmaster:jenkins-master
+   environment:
+    - "TZ=America/Denver"
   jslavejava8:
    build: jslave-java8
   jslavenode:
@@ -27,6 +31,8 @@ services:
     - jslavedata
    volumes:
     - /var/run/docker.sock:/var/run/docker.sock
+   environment:
+    - "TZ=America/Denver"
   jslavedata:
    build: jslave-data
   sshcoderepo:
@@ -36,6 +42,8 @@ services:
     - "2233:22"
    volumes_from:
     - sshdata
+   environment:
+    - "TZ=America/Denver"
   sshdata:
    build: 
      context: ssh-data
