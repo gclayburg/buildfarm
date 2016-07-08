@@ -1,5 +1,8 @@
+notes.txt
+
+#ssh keys
+id_rsa.pub
+id_rsa
 authorized_keys
 jenkins-master-key
 jenkins-master-key.pub
-notes.txt
-
