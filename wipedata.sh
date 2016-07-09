@@ -1,4 +1,6 @@
 #!/bin/bash
+export DOCKERGID=NA
+export BUILDFARM_HOSTNAME=NA
 docker-compose stop
 docker-compose rm "$@" jenkinsmaster jenkinsnginx
 docker-compose rm -v "$@" jenkinsdata
