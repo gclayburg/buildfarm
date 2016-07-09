@@ -15,5 +15,5 @@ cat jenkins-master-key.pub >> authorized_keys
 [ -r ~/.ssh/authorized_keys ] && cat ~/.ssh/authorized_keys >> authorized_keys
 
 cp authorized_keys ../ssh-data/.ssh/
-cp authorized_keys ../jslave-data/
+cp authorized_keys ../jslave-data/.ssh/
 

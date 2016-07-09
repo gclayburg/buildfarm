@@ -16,4 +16,4 @@ if [[ ! -f keys/jenkins-master-key ]]; then
   fi
   echo "new ssh key generated for jenkins master"
 fi
-docker-compose stop && docker-compose build && docker-compose up -d jenkinsdata jslavedata jenkinsmaster jenkinsnginx sshcoderepo && docker-compose logs
+docker-compose stop && docker-compose -f docker-compose-buildonly.yml build && docker-compose up -d jenkinsdata jslavedata jenkinsmaster jenkinsnginx sshcoderepo && docker-compose logs
