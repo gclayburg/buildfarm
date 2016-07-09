@@ -11,11 +11,12 @@ ARG BUILDFARM_HOST=overridemeifyouwanttotriggerjenkinsbuildongitpush
 
 RUN cat /home/git/coderepo.git/hooks/post-receive.tmp | \
         sed -e "s/BUILDFARMHOST/${BUILDFARM_HOST}/g" \
-        > /home/git/coderepo.git/hooks/post-receive && \
-    rm /home/git/coderepo.git/hooks/post-receive.tmp && \
+        > /home/git/coderepo.git/hooks/post-receive &&\
+    rm /home/git/coderepo.git/hooks/post-receive.tmp &&\
+    chmod 755 /home/git/coderepo.git/hooks/post-receive &&\
+    chmod 700 /home/git/.ssh &&\
     chmod 600 /home/git/.ssh/authorized_keys &&\
-    chown -R git:git /home/git &&\
-    chmod 755 /home/git/coderepo.git/hooks/post-receive 
+    chown -R git:git /home/git 
 
 VOLUME ["/home/git"]
 
