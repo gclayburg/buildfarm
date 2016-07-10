@@ -1,8 +1,14 @@
-FROM buildfarm_jslavejava8
+FROM buildfarm_jslavenode
 MAINTAINER Gary Clayburg
 
-RUN chown jenkins:jenkins /home/jenkins
+USER root
+
+COPY .ssh /home/jenkins/.ssh
+RUN chmod 700 /home/jenkins/.ssh &&\
+    chmod 600 /home/jenkins/.ssh/authorized_keys &&\
+    chown -R jenkins:jenkins /home/jenkins 
+
 VOLUME ["/home/jenkins"]
 
 USER jenkins
-CMD ["echo", "Data container for Jenkins"]
+CMD ["echo", "Data container for Jenkins slave"]

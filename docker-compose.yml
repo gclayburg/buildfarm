@@ -1,23 +1,58 @@
-jenkinsdata:
- build: jenkins-data
-jenkinsmaster:
- build: jenkins-master
- volumes_from:
-  - jenkinsdata
- ports:
-  - "50000:50000"
-jenkinsnginx:
- build: jenkins-nginx
- ports:
-  - "80:80"
- links:
-  - jenkinsmaster:jenkins-master
-jslavejava8:
- build: jslave-java8
-jslavenode:
- build: jslave-nodejs445
- volumes_from:
-  - jslavedata
-jslavedata:
- build: jslave-data
+version: '2'
+services:
+  jenkinsdata:
+   build: jenkins-data
+  jenkinsmaster:
+   build: jenkins-master
+   volumes_from:
+    - jenkinsdata
+   volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+   ports:
+    - "50000:50000"
+   links:
+    - sshcoderepo:ssh-coderepo
+   environment:
+    - "TZ=America/Denver"
+  jenkinsnginx:
+   build: jenkins-nginx
+   ports:
+    - "80:80"
+   links:
+    - jenkinsmaster:jenkins-master
+   environment:
+    - "TZ=America/Denver"
+  jslavejava8:
+   build: jslave-java8
+  jslavenode:
+   build: 
+     context: jslave-nodejs445
+     args:
+       DOCKER_GID: ${DOCKERGID}
+   volumes_from:
+    - jslavedata
+   volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+   environment:
+    - "TZ=America/Denver"
+  jslavedata:
+   build: jslave-data
+  sshcoderepo:
+   build: 
+     context: ssh-coderepo
+   ports:
+    - "2233:22"
+   volumes_from:
+    - sshdata
+   environment:
+    - "TZ=America/Denver"
+  sshdata:
+   build: 
+     context: ssh-data
+     args:
+       BUILDFARM_HOST: ${BUILDFARM_HOSTNAME}
+  jenkinssuper:
+   build:
+     context: jenkins-super
+
 
