@@ -6,6 +6,8 @@ services:
    build: jenkins-master
    volumes_from:
     - jenkinsdata
+   volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
    ports:
     - "50000:50000"
    links:
