@@ -16,7 +16,7 @@
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
   <clouds>
     <com.nirima.jenkins.plugins.docker.DockerCloud plugin="docker-plugin@0.16.0">
-      <name>local docker on jefferson</name>
+      <name>local docker on BUILDFARMHOST</name>
       <templates>
         <com.nirima.jenkins.plugins.docker.DockerTemplate>
           <configVersion>2</configVersion>
@@ -66,7 +66,7 @@
           <pullStrategy>PULL_LATEST</pullStrategy>
         </com.nirima.jenkins.plugins.docker.DockerTemplate>
       </templates>
-      <serverUrl>http://jefferson:2375</serverUrl>
+      <serverUrl>http://BUILDFARMHOST:2375</serverUrl>
       <connectTimeout>0</connectTimeout>
       <readTimeout>0</readTimeout>
       <credentialsId></credentialsId>
