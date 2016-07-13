@@ -1,7 +1,10 @@
 version: '2'
 services:
   jenkinsdata:
-    build: jenkins-data
+    build: 
+      context: jenkins-data
+      args:
+        BUILDFARM_HOST: ${BUILDFARM_HOSTNAME}
     depends_on:
       - jenkinsmaster
   jenkinsmaster:

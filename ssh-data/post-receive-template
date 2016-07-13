@@ -1,0 +1,36 @@
+#!/bin/sh
+# This script triggers a Jenkins build job each time a change is received from a git client
+
+# We rely on docker-compose version 2 and its underlying docker networking features for this post-receive git hook.  
+# buildfarm_jenkinsmaster_1 is both the container name created by docker-compose and visible as a hostname to this container
+
+# ssh-coderepo is a hostname visible on buildfarm_jenkinsmaster_1.  docker-compose added that hostname since 
+# buildfarm_jenkinsmaster_1 has a link to ssh-coderepo in docker-compose.yml.  We also could have used a hostname of 
+# buildfarm_sshcoderepo_1.  Docker resolves both names to the same IP address.
+
+#However, we are using the outwardfacing hostname and port number of our ssh server here.  Port 2233 is visible to any 
+# host inside and outside of the buildfarm.  We do this because we are using the Jenkins docker plugin and it launches 
+# our docker containers without knowlege of our custom network that docker-compose automatically created for us.  
+
+#So for an automatic build to start on Jenkins, 
+#1. The url= parameter here must exactly match a build job in our jenkins server.  
+#   That build job must be configured to use this same git repository url
+#2. The build job must have the "poll SCM" build trigger selected.  You do not need to configure a schedule for polling.
+#3. The hostname of the git repository must be visible to both the master jenkins server and all build slaves
+#4. A git client must add this repository as a remote (see below)
+
+#This configuration could be simplified quite a bit  if the docker plugin would honor the "--net" docker option.  
+#  If that were the case we could just use a hardcoded curl command that would not need to be customized with a hostname. 
+#  We could just use the docker-compose generated name that is visible to all containers in the build farm like this:
+
+#curl http://buildfarm_jenkinsmaster_1:8080/git/notifyCommit?url=git@ssh-coderepo:/home/git/coderepo.git
+
+#Instead, we go through a few hoops to get the hostname from a parameter
+#curl http://buildfarm_jenkinsmaster_1:8080/git/notifyCommit?url=ssh://git@scranton2:2233/home/git/coderepo.git
+curl http://buildfarm_jenkinsmaster_1:8080/git/notifyCommit?url=ssh://git@BUILDFARMHOST:2233/home/git/REPONAME.git
+
+# To use this ssh repository from an existing git repository:
+# $ git remote add buildfarm ssh://git@BUILDFARMHOST:2233/home/git/coderepo.git
+# $ git push buildfarm master
+# 
+# build should automatically start on Jenkins.  Enjoy.

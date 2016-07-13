@@ -22,6 +22,23 @@ RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 581
 #install docker-compose
 RUN curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && chmod 755 /usr/local/bin/docker-compose
 
+#install gradle
+# Gradle
+ENV GRADLE_VERSION 2.13
+ENV GRADLE_SHA 0f665ec6a5a67865faf7ba0d825afb19c26705ea0597cec80dd191b0f2cbb664
+
+RUN cd /usr/lib \
+ && curl -fl https://downloads.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -o gradle-bin.zip \
+ && echo "$GRADLE_SHA gradle-bin.zip" | sha256sum -c - \
+ && unzip "gradle-bin.zip" \
+ && ln -s "/usr/lib/gradle-${GRADLE_VERSION}/bin/gradle" /usr/bin/gradle \
+ && rm "gradle-bin.zip"
+
+# Set Appropriate Environmental Variables
+ENV GRADLE_HOME /usr/lib/gradle
+ENV PATH $PATH:$GRADLE_HOME/bin
+
+
 # add jenkins to docker group which was created by docker install above (gid=999)
 # add jenkins user to docker group that coreos uses (gid=233) 
 # this allows the jenkins user to use the bind mount /var/run/docker.sock when this container is being run on coreos
