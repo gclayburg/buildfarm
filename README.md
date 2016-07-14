@@ -106,7 +106,7 @@ To ssh://git@jefferson:2233/home/git/coderepo.git
 
 One thing I'll point out here is the messages printed here from the remote repository.  `No git jobs found` means that the Jenkins git plugin did not find a matching job to build.  This is normal for the first git push of our project.  We need to use the Jenkins UI to manually trigger our first build.  So, open a browser to the Jenkins UI. It should looke like this:
 
-![2 jobs](https://github.com/gclayburg/buildfarm/screenshots/jenkins-2-initial-jobs.png)
+![2 jobs](https://github.com/gclayburg/buildfarm/tree/master/screenshots/jenkins-2-initial-jobs.png)
 ![2 Jenkins jobs](http://raw.githubusercontent.com/gclayburg/buildfarm/master/screenshots/jenkins-2-initial-jobs.png)
 
 Click the build button for the `buildfarm1` job.  It should complete quickly with an error.  The console output of thisbuild should end with something like this:
