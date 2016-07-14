@@ -44,24 +44,24 @@ To use this project, you need to install just a few tools to get the base Docker
 All of the other dependencies are specified and downloaded with the docker compose scripts in this project.
 
 ### BuildFarm quickstart
-Open a terminal session to your Linux box with Docker installed.  Everything we do will be on this one box.
+Open a terminal session to your Linux box with Docker installed.  We will be running all of the BuildFarm components on this one box.
 ```console
 $ git clone git@github.com:gclayburg/buildfarm.git
 $ cd buildfarm
 $ ./bounce.sh
 ```
 
-This will start the process of downloading, building and running all of the docker images that we need for BuildFarm.  There are 9 total images here, so this will take a while to finish.  While we are waiting, lets create a new development project that we can build with the BuildFarm once it is ready.  We will use the [JHipster](https://jhipster.github.io/) to create our project.  If you have not setup your system for JHipster, [follow those instructions first].  You could choose to create your development project on the same Linux box where you are running BuildFarm, but that isn't necessary.  It might be simpler to create the JHipster project on a laptop and run BuildFarm on a separate Linux server.
+This will start the process of downloading, building and running all of the docker images that we need for BuildFarm.  There are 9 total images here, so this will take a while to finish.  While we are waiting, lets create a new development project that we can build with the BuildFarm once it is ready.  We will use the [JHipster](https://jhipster.github.io/) to create our project.  If you have not setup your system for JHipster, [follow those instructions first].  You could choose to create your development project on the same Linux box where you are running BuildFarm, but that isn't necessary.  It might be simpler for you to create the JHipster project on a laptop and run BuildFarm on a separate Linux server.
 
 In a new terminal session on your development workstation, type:
-```console
+```
 $ mkdir jhip-maven-mysql
 $ cd jhip-maven-mysql
 $ yo jhipster
 ```
 From here, you can follow the jhipster instructions to select what kind or project to create.  For this quickstart, I chose to create a monolithic application using Maven, MySQL, and H2 in-memory database for development.  Once JHipster has created your application, you can create a new git repository for it and add our new project like this:
 
-```console
+```
 $ git init
 Initialized empty Git repository in /home/gclaybur/dev/jhip-maven-mysql/.git/
 $ git add .
@@ -104,14 +104,11 @@ To ssh://git@jefferson:2233/home/git/coderepo.git
  * [new branch]      master -> master
 ```
 
-One thing I'll point out here is the messages printed here from the remote repository.  `No git jobs found` means that the Jenkins git plugin did not find a matching job to build.  This is normal for the first git push of our project.  We need to use the Jenkins UI to manually trigger our first build.  So, open a browser to the Jenkins UI. It should looke like this:
+One thing I'll point out here is the messages printed here from the remote repository.  `No git jobs found` means that the Jenkins git plugin did not find a matching job to build.  This is normal for the first git push of our project.  We need to use the Jenkins UI to manually trigger our first build.  So, open a browser to the Jenkins UI. It should look like this:
 
-![new jobs](/screenshots/jenkins-2-initial-jobs.png?raw=true)
+![2 new jobs](/screenshots/jenkins-2-initial-jobs.png?raw=true)
 
-![2 jobs](https://github.com/gclayburg/buildfarm/tree/master/screenshots/jenkins-2-initial-jobs.png)
-![2 Jenkins jobs](http://raw.githubusercontent.com/gclayburg/buildfarm/master/screenshots/jenkins-2-initial-jobs.png)
-
-Click the build button for the `buildfarm1` job.  It should complete quickly with an error.  The console output of thisbuild should end with something like this:
+Click the build button for the `buildfarm1` job.  It should complete quickly with an error.  The console output of this build should end with something like this:
 ```
 ERROR: /var/jenkins_home/workspace/buildfarm1@script/Jenkinsfile not found
 Finished: FAILURE
