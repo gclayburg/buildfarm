@@ -54,14 +54,14 @@ $ ./bounce.sh
 This will start the process of downloading, building and running all of the docker images that we need for BuildFarm.  There are 9 total images here, so this will take a while to finish.  While we are waiting, lets create a new development project that we can build with the BuildFarm once it is ready.  We will use the [JHipster](https://jhipster.github.io/) to create our project.  If you have not setup your system for JHipster, [follow those instructions first].  You could choose to create your development project on the same Linux box where you are running BuildFarm, but that isn't necessary.  It might be simpler for you to create the JHipster project on a laptop and run BuildFarm on a separate Linux server.
 
 In a new terminal session on your development workstation, type:
-```
+```console
 $ mkdir jhip-maven-mysql
 $ cd jhip-maven-mysql
 $ yo jhipster
 ```
 From here, you can follow the jhipster instructions to select what kind or project to create.  For this quickstart, I chose to create a monolithic application using Maven, MySQL, and H2 in-memory database for development.  Once JHipster has created your application, you can create a new git repository for it and add our new project like this:
 
-```
+```console
 $ git init
 Initialized empty Git repository in /home/gclaybur/dev/jhip-maven-mysql/.git/
 $ git add .
@@ -83,7 +83,7 @@ If you use this project, just remember to push to `buildfarm` and not `origin`.
 # Push and Build
 
 We are almost ready to push our code to our BuildFarm.  When the BuildFarm is ready, you will see standard Jenkins log messages back in our terminal window where bounce.sh is running.  Look for a line that looks like this:
-```console
+```
 jenkinsmaster_1 | INFO: Jenkins is fully up and running
 ```
 Once this message appears, we are ready to push our code to our remote repository.  
