@@ -3,10 +3,14 @@ This creates a Continuous Integration build farm by fitting together and automat
 This project sets up a buildfarm on a Linux machine running Docker.  
 
 This project automates the setup of of many tools so that you can start building and running your project.  
+
+BuildFarm 
+
 With this BuildFarm you will be able to
 - push your project to the BuildFarm git repository, and watch Jenkins build it
 - use the Jenkins pipeline build system without needing to deal with initial configuration.  BuildFarm automates that.
 
+This is all done in docker containers so you gan get running quickly
 
 Under the covers the BuildFarm will automatically:
 - run Jenkins in a docker container
@@ -47,14 +51,15 @@ $ cd buildfarm
 $ ./bounce.sh
 ```
 
-This will take a while to download the docker base images and build our own images from those.  While we are waiting, lets create a new development project that we can build with the buildfarm once it is ready.  We will use the JHipster project to create our project.  If you have not setup your system for JHipster, [follow those instructions first].  In a new terminal session on your development workstation, type:
+This will start the process of downloading, building and running all of the docker images that we need for BuildFarm.  There are 9 total images here, so this will take a while to finish.  While we are waiting, lets create a new development project that we can build with the BuildFarm once it is ready.  We will use the [JHipster](https://jhipster.github.io/) to create our project.  If you have not setup your system for JHipster, [follow those instructions first].  You could choose to create your development project on the same Linux box where you are running BuildFarm, but that isn't necessary.  It might be simpler to create the JHipster project on a laptop and run BuildFarm on a separate Linux server.
 
+In a new terminal session on your development workstation, type:
 ```console
 $ mkdir jhip-maven-mysql
 $ cd jhip-maven-mysql
 $ yo jhipster
 ```
-From here, you can follow the jhipster instructions to select what kind or project to create.  For this quickstart, I chose to create a monolithic application using Maven, MySQL, and H2 in-memory database for development.  Once JHipster has created your application, you can add our new project to git:
+From here, you can follow the jhipster instructions to select what kind or project to create.  For this quickstart, I chose to create a monolithic application using Maven, MySQL, and H2 in-memory database for development.  Once JHipster has created your application, you can create a new git repository for it and add our new project like this:
 
 ```console
 $ git init
@@ -65,7 +70,19 @@ $ git remote add origin ssh://git@jefferson:2233/home/git/coderepo.git
 ```
 Here, I am using the hostname `jefferson` for the git remote repository.  That is the name of my Linux server where buildfarm is installed.  Make sure to substitute the hostname of your server.  The port number will still be 2233.  That number is hardcoded in the sshcoderepo docker image.  More on these images later.
 
-We are almost ready to push our code to our buildfarm.  When the buildfarm is ready, you will see standard Jenkins log messages in our terminal window where bounce.sh is running.  Look for a line that looks like this:
+# Build a pre-generated JHipster project
+
+If you would rather skip the process of creating your own application to build, you can clone this project from github
+```console
+$ git clone https://github.com/gclayburg/hello-jhipster
+$ cd hello-jhipster
+$ git remote add buildfarm ssh://git@jefferson:2233/home/git/coderepo.git
+```
+If you use this project, just remember to push to `buildfarm` and not `origin`.  
+
+# Push and Build
+
+We are almost ready to push our code to our BuildFarm.  When the BuildFarm is ready, you will see standard Jenkins log messages back in our terminal window where bounce.sh is running.  Look for a line that looks like this:
 ```console
 jenkinsmaster_1 | INFO: Jenkins is fully up and running
 ```
@@ -89,6 +106,7 @@ To ssh://git@jefferson:2233/home/git/coderepo.git
 
 One thing I'll point out here is the messages printed here from the remote repository.  `No git jobs found` means that the Jenkins git plugin did not find a matching job to build.  This is normal for the first git push of our project.  We need to use the Jenkins UI to manually trigger our first build.  So, open a browser to the Jenkins UI. It should looke like this:
 
+![2 jobs](https://github.com/gclayburg/buildfarm/screenshots/jenkins-2-initial-jobs.png)
 ![2 Jenkins jobs](http://raw.githubusercontent.com/gclayburg/buildfarm/master/screenshots/jenkins-2-initial-jobs.png)
 
 Click the build button for the `buildfarm1` job.  It should complete quickly with an error.  The console output of thisbuild should end with something like this:
