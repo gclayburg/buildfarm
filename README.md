@@ -1,39 +1,12 @@
 # Docker box BuildFarm
-This creates a Continuous Integration build farm by fitting together and automating a bunch of common build tools
-This project sets up a buildfarm on a Linux machine running Docker.  
-
-This project automates the setup of of many tools so that you can start building and running your project.  
-
-BuildFarm 
+This creates a Continuous Integration BuildFarm by fitting together and automating a bunch of common build tools in the Java, JavaScript, Jenkins, and Docker ecosystems.  It was initially created to help with building JHipster projects with Jenkins Pipeline builds, but should be usable for building anything.
 
 With this BuildFarm you will be able to
 - push your project to the BuildFarm git repository, and watch Jenkins build it
 - use the Jenkins pipeline build system without needing to deal with initial configuration.  BuildFarm automates that.
 
-This is all done in docker containers so you gan get running quickly
+This is all done in docker containers and a healthy dose of automation so you gan get running quickly.
 
-Under the covers the BuildFarm will automatically:
-- run Jenkins in a docker container
-- configure Jenkins with plugins preconfigured for common things like git source code management, and Jenkins Pipeline jobs
-- create a persistent docker volume for storing your Jenkins build jobs and history (JENKINS_HOME)
-- configure Jenkins docker plugin to manage a Jenkins slave server
-- setup a docker container running the build slave that will be able to
-  - build your project with Java,Maven,NodeJS
-  - create a docker image of your project
-  - run your project from its docker-compose yaml definition
-  - use the created docker volume to cache things like the Maven repository and node dependencies
-- configure a ssh server for use as a git repository, running in a docker container
-- setup a bare git repository on the ssh server
-- setup git post-receive hook to trigger Jenkins build job 
-- create a persistent docker volume for storing the git repository data
-- generate ssh private key for Jenkins master
-- establish ssh trust to Jenkins slave server via authorized_keys
-- establish ssh trust to ssh coderepo server via authorized_keys
-- generate Jenkins credentials to use these generated keys.  Your build jobs just select the key they need.
-- populate Jenkins with a build job to automatically build code from the git code repository
-- configure an nginx server to act as a reverse proxy for Jenkins UI
-
-This is all done on a single Linux box running docker
 
 ### Pre-requirements
 To use this project, you need to install just a few tools to get the base Docker environment functional.  
@@ -71,11 +44,11 @@ $ git remote -v
 origin	ssh://git@jefferson:2233/home/git/coderepo.git (fetch)
 origin	ssh://git@jefferson:2233/home/git/coderepo.git (push)
 ```
-Here, I am using the hostname `jefferson` for the git remote repository.  That is the name of my Linux server where buildfarm is installed.  Make sure to substitute the hostname of your server.  The port number will still be 2233.  That number is hardcoded in the sshcoderepo docker image.  More on these images later.
+Here, I am using the hostname `jefferson` for the git remote repository.  That is the name of my Linux server where BuildBarm is installed.  Make sure to substitute the hostname of your server.  The port number will still be 2233.  That number is hardcoded in the sshcoderepo docker image.  More on these images later.
 
 # Build a pre-generated JHipster project
 
-If you would rather skip the process of creating your own application to build, you can clone this project from github
+If you would rather skip the process of creating your own application to build, you can clone this project from github instead:
 ```console
 $ git clone https://github.com/gclayburg/hello-jhipster
 $ cd hello-jhipster
@@ -87,6 +60,8 @@ origin	https://github.com/gclayburg/hello-jhipster (fetch)
 origin	https://github.com/gclayburg/hello-jhipster (push)
 
 ```
+This hello-jhipster was also largely generated from JHipster.  It is a Monolithic application that uses the Maven project model, and a MongoDB database.  The pom.xml file is slightly modified from the default to allow for parallel testing with the `prodtest` profile.
+
 If you use this project, just remember to push to `buildfarm` and not `origin` to trigger Jenkins builds.  
 
 # Push and Build
@@ -122,7 +97,7 @@ Click the build button for the `buildfarm1` job.  It should complete quickly wit
 ERROR: /var/jenkins_home/workspace/buildfarm1@script/Jenkinsfile not found
 Finished: FAILURE
 ```
-Oops, we haven't yet added a Jenkinsfile to our development project.  We need to add this so we can tell Jenkins exactly what steps are needed to build, test, package and run our application.  Copy the `Jenkinsfile` from the root of this project into your development directory and commit and push your changes:
+Oops, we haven't yet added a `Jenkinsfile` to our development project.  We need to add this so we can tell Jenkins exactly what steps are needed to build, test, package and run our application.  Copy the `Jenkinsfile` from the root of this project into your development directory and commit and push your changes:
 ```console
 $ cp ../buildfarm/Jenkinsfile .
 $ git add Jenkinsfile && git commit -m "Initial Jenkinsfile" && git push origin master
@@ -144,6 +119,40 @@ To ssh://git@jefferson:2233/home/git/coderepo.git
    1d3ddad..3209e98  master -> master
 ```
 Note the message here `remote: Scheduled polling of buildfarm1`.  This means our git push has triggered a build of our buildfarm1 job in Jenkins.  For our purposes here, the other messages can be ignored.
+
+So with any luck your project is now building on Jenkins.  The Jenkinsfile we are using will build a production war file, run all the tests, and create and run a docker image of this app.  When the build finishes without errors you will find it running at on port 8080 on your Linux docker box - http://jefferson:8080 in my case.  The build runs the application based on your docker-compose definitions at `src/main/docker/app.yml`.  Now you can manually inpsect the production app
+
+Of course, you will probably want to customize what your build does.  You might want to run some of the tests in parallel or deploy the app to a different server - or maybe somewhere in the cloud.  Who knows, maybe you need some further downstream integration testing against the running server.
+
+# BuildFarm behind the scenes
+Under the covers the BuildFarm will automatically:
+- run Jenkins in a docker container
+- configure Jenkins with plugins preconfigured for common things like git source code management, Jenkins Pipeline jobs, and the docker plugin
+- create a persistent docker volume for storing your Jenkins build jobs and history (JENKINS_HOME)
+- configure Jenkins docker plugin to manage a Jenkins slave server
+- setup a docker container running the build slave that will be able to
+  - build your project with Java,Maven,NodeJS
+  - create a docker image of your project
+  - run your project from its docker-compose yaml definition
+  - use the created docker volume to cache things like the Maven repository and node dependencies
+- configure a ssh server for use as a git repository, running in a docker container
+- setup a bare git repository on the ssh server
+- setup git post-receive hook to trigger Jenkins build job 
+- create a persistent docker volume for storing the git repository data
+- generate ssh private key for Jenkins master
+- establish ssh trust to Jenkins slave server via authorized_keys
+- establish ssh trust to ssh coderepo server via authorized_keys
+- generate Jenkins credentials to use these generated keys.  Your build jobs just select the key they need.
+- populate Jenkins with a build job to automatically build code from the git code repository
+- configure an nginx server to act as a reverse proxy for Jenkins UI
+
+This is all done on a single Linux box running docker.  Since all of this is automated with Docker, BuildFarm is very quick to setup and very portable.
+
+# Credits
+- [Riot Games Engineering](https://github.com/maxfields2000/dockerjenkins_tutorial)  A great tutorial and practical advice for running Jenkins and Docker together.  
+
+
+
 
 
 
