@@ -1,5 +1,5 @@
 # Docker box BuildFarm
-This creates a Continuous Integration BuildFarm by fitting together and automating a bunch of common build tools in the Java, JavaScript, Jenkins, and Docker ecosystems.  It was initially created to help with building JHipster projects with Jenkins Pipeline builds, but should be usable for building anything.
+This creates a Continuous Integration BuildFarm by fitting together and automating a bunch of common build tools in the Java, JavaScript, Jenkins, and Docker ecosystems.  It was initially created to help with building [JHipster](https://jhipster.github.io/) projects with Jenkins Pipeline builds, but should be usable for building just about anything.
 
 With this BuildFarm you will be able to
 - push your project to the BuildFarm git repository, and watch Jenkins build it
@@ -8,7 +8,7 @@ With this BuildFarm you will be able to
 This is all done in docker containers and a healthy dose of automation so you gan get running quickly.
 
 
-### Pre-requirements
+# Software Requirements
 To use this project, you need to install just a few tools to get the base Docker environment functional.  
 - [Docker Engine] version 1.10 or higher.  This must be configured to listen on port 2375, without TLS enabled
 - [Docker Compose] version 1.6.2 or higher
@@ -16,7 +16,7 @@ To use this project, you need to install just a few tools to get the base Docker
 
 All of the other dependencies are specified and downloaded with the docker compose scripts in this project.
 
-### BuildFarm quickstart
+# BuildFarm quickstart
 Open a terminal session to your Linux box with Docker installed.  We will be running all of the BuildFarm components on this one box.
 ```console
 $ git clone git@github.com:gclayburg/buildfarm.git
