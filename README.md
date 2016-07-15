@@ -67,6 +67,9 @@ Initialized empty Git repository in /home/gclaybur/dev/jhip-maven-mysql/.git/
 $ git add .
 $ git commit -m "First commit"
 $ git remote add origin ssh://git@jefferson:2233/home/git/coderepo.git
+$ git remote -v
+origin	ssh://git@jefferson:2233/home/git/coderepo.git (fetch)
+origin	ssh://git@jefferson:2233/home/git/coderepo.git (push)
 ```
 Here, I am using the hostname `jefferson` for the git remote repository.  That is the name of my Linux server where buildfarm is installed.  Make sure to substitute the hostname of your server.  The port number will still be 2233.  That number is hardcoded in the sshcoderepo docker image.  More on these images later.
 
@@ -77,8 +80,14 @@ If you would rather skip the process of creating your own application to build, 
 $ git clone https://github.com/gclayburg/hello-jhipster
 $ cd hello-jhipster
 $ git remote add buildfarm ssh://git@jefferson:2233/home/git/coderepo.git
+$ git remote -v
+buildfarm	ssh://git@jefferson:2233/home/git/coderepo.git (fetch)
+buildfarm	ssh://git@jefferson:2233/home/git/coderepo.git (push)
+origin	https://github.com/gclayburg/hello-jhipster (fetch)
+origin	https://github.com/gclayburg/hello-jhipster (push)
+
 ```
-If you use this project, just remember to push to `buildfarm` and not `origin`.  
+If you use this project, just remember to push to `buildfarm` and not `origin` to trigger Jenkins builds.  
 
 # Push and Build
 
@@ -113,7 +122,7 @@ Click the build button for the `buildfarm1` job.  It should complete quickly wit
 ERROR: /var/jenkins_home/workspace/buildfarm1@script/Jenkinsfile not found
 Finished: FAILURE
 ```
-Oops, we haven't yet added a Jenkinsfile to our development project.  We need to add this so we can tell Jenkins exactly what steps are needed to build, test, package and run our application.  Copy the Jenkinsfile from the root of this project into your development directory and commit and push your changes:
+Oops, we haven't yet added a Jenkinsfile to our development project.  We need to add this so we can tell Jenkins exactly what steps are needed to build, test, package and run our application.  Copy the `Jenkinsfile` from the root of this project into your development directory and commit and push your changes:
 ```console
 $ cp ../buildfarm/Jenkinsfile .
 $ git add Jenkinsfile && git commit -m "Initial Jenkinsfile" && git push origin master
@@ -135,6 +144,7 @@ To ssh://git@jefferson:2233/home/git/coderepo.git
    1d3ddad..3209e98  master -> master
 ```
 Note the message here `remote: Scheduled polling of buildfarm1`.  This means our git push has triggered a build of our buildfarm1 job in Jenkins.  For our purposes here, the other messages can be ignored.
+
 
 
 [Linux]: <http://www.ubuntu.com>
