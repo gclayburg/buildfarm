@@ -121,16 +121,15 @@ I haven't mentioned the `jenkinsnginx` image yet.  This is simply an nginx conta
 Out of the box, BuildFarm will configure Jenkins for you for your first build job using the git repository running on `sshcoderepo`.  The rest of this section goes into how you would configure this manually if you needed to.
 
 Open a browser to port 80 on the host where buildfarm is running.  You should see this:
-
-![new jobs](http://raw.githubusercontent.com/gclayburg/buildfarm/master/screenshots/create-new-jobs.png)
+![new jobs](/screenshots/create-new-jobs.png)
 
 Navigate to Manage Jenkins->Configure System. Scroll to the bottom of the page to the Cloud section. Click Add a new cloud->Docker
 
-![add-new-cloud](http://raw.githubusercontent.com/gclayburg/buildfarm/master/screenshots/add-new-cloud.png)
+![add-new-cloud](/screenshots/add-new-cloud.png)
 
 Fill in the Name and Docker URL fields.  This is telling the docker-plugin to lauch our slave by first connecting to our unsecured docker daemon listening on port 2375.  (Your docker daemon must be listening on this port)  Since ours is unsecured, we leave credentials empty.  
 
-![cloud-name-url](http://raw.githubusercontent.com/gclayburg/buildfarm/master/screenshots/cloud-name-url.png)
+![cloud-name-url](/screenshots/cloud-name-url.png)
 
 Make sure you use the Test Connection button to verify that Jenkins can communicate to the Docker daemon.
 
@@ -145,7 +144,7 @@ Labels: nodejs4
 Launch Method: Docker SSH computer launcher
 ```
 
-![new jobs](http://raw.githubusercontent.com/gclayburg/buildfarm/master/screenshots/docker-template.png)
+![new jobs](/screenshots/docker-template.png)
 
 We also need to fill in the container settings so that the docker plugin will be able to launch our docker image using our already prepared docker volume and the docker socket on our host.  The volume is needed for caching information between builds - things like maven and npm use this volume.  The docker socket is needed for [running docker and docker-compose CLI commands in our slave container](https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/)  This comes in quite handy for building and running docker images as part of the build of our development projects.  So, fill in these 2 fields under `Container settings...`
 
@@ -156,7 +155,7 @@ Volumes From   buildfarm_jslavedata_1
 
 The last thing we need to do is add credentials for the docker-plugin to make the ssh connection to our slave container.  Click the add button to add a Jenkins credential.  The username is jenkins and the password is jenkins.
 
-![jenkins-jenkins](http://raw.githubusercontent.com/gclayburg/buildfarm/master/screenshots/jenkins-jenkins.png)
+![jenkins-jenkins](/screenshots/jenkins-jenkins.png)
 Click Add and then Save.  We are now ready to create our pipeline build job.
 
 You could also select the credentials from the dropdown.  BuildFarm created 2 entries here.  Both use the ssh key on the Jenkins master server (~jenkins/.ssh/id_rsa).  One is configured to log into a server with the name jenkins and the other is for the user git.
