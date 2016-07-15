@@ -149,8 +149,8 @@ Launch Method: Docker SSH computer launcher
 We also need to fill in the container settings so that the docker plugin will be able to launch our docker image using our already prepared docker volume and the docker socket on our host.  The volume is needed for caching information between builds - things like maven and npm use this volume.  The docker socket is needed for [running docker and docker-compose CLI commands in our slave container](https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/)  This comes in quite handy for building and running docker images as part of the build of our development projects.  So, fill in these 2 fields under `Container settings...`
 
 ```sh
-Volumes        /var/run/docker.sock:/var/run/docker.sock
-Volumes From   buildfarm_jslavedata_1
+Volumes:        /var/run/docker.sock:/var/run/docker.sock
+Volumes From:   buildfarm_jslavedata_1
 ```
 
 The last thing we need to do is add credentials for the docker-plugin to make the ssh connection to our slave container.  Click the add button to add a Jenkins credential.  The username is jenkins and the password is jenkins.
@@ -158,18 +158,22 @@ The last thing we need to do is add credentials for the docker-plugin to make th
 ![jenkins-jenkins](/screenshots/jenkins-jenkins.png)
 Click Add and then Save.  We are now ready to create our pipeline build job.
 
-You could also select the credentials from the dropdown.  BuildFarm created 2 entries here.  Both use the ssh key on the Jenkins master server (~jenkins/.ssh/id_rsa).  One is configured to log into a server with the name jenkins and the other is for the user git.
+You could also select the credentials from the dropdown.  BuildFarm created 2 entries here.  Both use the ssh key on the Jenkins master server (~jenkins/.ssh/id_rsa).  One is configured to log into a server with the name `jenkins` and the other is for the user `git`.
 
 # Create and run build job
 
 From the Jenkins home page, navigate to Jenkins->New Item.  Select Pipeline and give it a name.  Click OK.  In the bottom of the build configuration page, there is a Pipeline section.  Select Definition: Pipeline script from SCM, SCM: Git.  
 
 # Building a project
-Now we need something to build from a git repository.  I have a simple [jhipster] generated project already checked into github that you can use.  Enter this for Repository URL: `https://github.com/gclayburg/hello-jhipster.git` This project is just a simple monolithic JHipster project created with a mongodb backend database and a Jenkinsfile added to it.  This Jenkinsfile groovy script has all of the details for building our project.  It is quite handy to be able to express the build lifecycle in a groovy DSL right along side the code to your project.  Anyway, this project is finally ready to build.  Click the build button in Jenkins.  If everything works right, Jenkins will lauch our build slave image from our docker connection and connect to it with ssh to install and start the Jenkins slave.  It will then start building our project from the instructions in our Jenkinsfile.
+Now we need something to build from a git repository.  Enter this for Repository URL:
+```
+Repository URL:    https://github.com/gclayburg/hello-jhipster.git 
+```
+This project is just a simple monolithic [jhipster](https://jhipster.github.io) project created with a mongodb backend database and a `Jenkinsfile` added to it.  This `Jenkinsfile` groovy script has all of the details for building our project.  Click the build button in Jenkins.  If everything works right, Jenkins will lauch our build slave image from our docker connection and connect to it with ssh to install and start the Jenkins slave.  It will then start building our project from the instructions in our Jenkinsfile.
 
 # Security Hardening
 
-Obviously, there are several areas in the buildfarm that are insecure. The docker daemon listens on an unsecure port, we don't use SSL, the ssh usernames and passwords are widely known, and Jenkins Global Security is not enabled.  If security is important to you, all of these things can be secured.  The reason they aren't secured out of the box is the classic security/usability tradeoff.  In order to make things secure, there are many hoops to jump through.  The goal here is to minimize the number of hoops to get up and running. Security can be added in later.
+Obviously, there are several areas in the BuildFarm that are insecure. The docker daemon listens on an unsecure port, we don't use SSL, the ssh usernames and passwords are widely known, and Jenkins Global Security is not enabled.  If security is important to you, all of these things should be secured.  
 
 [official Jenkins docker image]: <https://hub.docker.com/_/jenkins/>
 [pipeline builds]: <https://jenkins.io/doc/pipeline/>
