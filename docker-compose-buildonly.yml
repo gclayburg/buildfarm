@@ -9,8 +9,6 @@ services:
       - jenkinsmaster
   jenkinsmaster:
     build: jenkins-master
-    depends_on:
-      - jenkinssuper
   jenkinsnginx:
     build: jenkins-nginx
     environment:
@@ -41,8 +39,5 @@ services:
         BUILDFARM_HOST: ${BUILDFARM_HOSTNAME}
     depends_on:
       - sshcoderepo
-  jenkinssuper:
-     build:
-       context: jenkins-super
 
 

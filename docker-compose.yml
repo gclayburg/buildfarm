@@ -54,8 +54,5 @@ services:
      context: ssh-data
      args:
        BUILDFARM_HOST: ${BUILDFARM_HOSTNAME}
-  jenkinssuper:
-   build:
-     context: jenkins-super
 
 
