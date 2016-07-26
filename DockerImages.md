@@ -22,7 +22,7 @@ Building jslavejava8
 Building jenkinsnginx
 ...
 ```
-Altogether, we are building 9 docker images with docker-compose.
+Altogether, we are building 8 docker images with docker-compose.
 
 `docker-compose up -d jenkinsdata jslavedata jenkinsmaster jenkinsnginx sshcoderepo`
 This starts 4 named containers detached from the terminal.  Note, we are not starting containers from all of the images that we build. We are going to rely on Jenkins and the [docker-plugin] to start our build slave container.
@@ -55,10 +55,8 @@ The `jenkinsmaster` image is specified from the Dockerfile in the `jenkins-maste
 
 `jenkinsdata` is a Docker [data volume container] that is used by `jenkinsmaster` We are using it to preserve the [JENKINS_HOME] directory between Jenkins server restarts.  Our [JENKINS_HOME] at /var/jenkins_home is the only persistent directory in the `jenkinsmaster` image.  
 
-You will also see we are building an image named `jenkinssuper`.  This image is essentially a copy of the [official Jenkins docker image] version 1.651.3 with the `VOLUME` instruction removed from its Dockerfile.  The reason we do this is so that we can add files to this data volume without jumping through hoops.  Things can get a little complicated with you build a docker images derived from a parent that has a VOLUME instruction.  More on this issue [here](https://github.com/jenkinsci/docker/issues/271)
-
 # Jenkins Slaves
-We are using the Jenkins [docker-plugin] for launching Jenkins slaves and the Jenkins pipeline style builds.  The way this works is that the Jenkinsfile in our project we are building will reference a node with a node label.  At build time, Jenkins will match this label with a container label configured with the [docker-plugin]. We'll get into configuring that part later.
+We are using the Jenkins [docker-plugin] for launching Jenkins slaves and the Jenkins pipeline style builds.  The way this works is that the `Jenkinsfile` in our project we are building will reference a node with a node label.  At build time, Jenkins will match this label with a container label configured with the [docker-plugin]. We'll get into configuring that part later.
 
 The docker-compose services we built for our Jenkins slave are these:
 ```sh
@@ -78,6 +76,14 @@ The docker-compose services we built for our Jenkins slave are these:
       - jslavenode
 ```
 `jslavenode` is our main Jenkins slave container.  This is where Jenkins will be doing builds of our Java development project. It has Java, Maven, and node.js installed and executes sshd on startup.  [docker-plugin] is responsible for installing and starting the Jenkins slave agent at build time.  
+
+This Jenkins slave is also being setup to be able to run both the `docker` command and the the `docker-compose` command as a part of a build instruction in our `Jenkinsfile`.  This is done by installing both `docker` and `docker-compose` inside of our `jslavenode` docker image.  We also bind mount the docker socket as described [here](https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/).  However, for this to work for us we need to make sure that the jenkins user that runs our slave server is a member of the docker group.  This is specified in our `jslavenode` `Dockerfile`:
+
+```
+ARG DOCKER_GID=233
+RUN usermod -G docker jenkins && groupadd -g ${DOCKER_GID} docker2 && usermod -G docker2 jenkins
+```
+Here we are adding the jenkins user to two groups.  One group named docker and another named docker2.  Why 2 groups?  Well, the docker group with gid=999 was added to our slave image as a part of the docker install commands.  However, our host server may or may not use the same gid for our docker group.  In my case, I use CoreOS and it creates the docker group with gid=233.  To fix this mismatch, we just adjusted our slave image to put the jenkins user as a member of the same gid of the docker user of the host.  This is all automated as a part of buildfarm as long as you make sure the DOCKER_GID argument is correct.  The `bounce.sh` script and `docker-compose-buildonly.yml` file do that.
 
 # SSH code repository server
 
@@ -118,7 +124,7 @@ You can see that we have 3 containers running, and 3 that have exited.  The 3 da
 I haven't mentioned the `jenkinsnginx` image yet.  This is simply an nginx container configured as a reverse proxy for `jenkinsmaster`.  `jenkinsnginx` listens on port 80 and forwards everything to our jenkinsmaster, which listens on port 8080.  You can also see in the port mapping section above that port 8080 exposed on jenkinsmaster is not mapped to a local port, so our browser can only access Jenkins on port 80.  
 
 ### Jenkins build job configuration
-Out of the box, BuildFarm will configure Jenkins for you for your first build job using the git repository running on `sshcoderepo`.  The rest of this section goes into how you would configure this manually if you needed to.
+Out of the box, BuildFarm will configure Jenkins for you with a build job using the git repository running on `sshcoderepo`.  The rest of this section goes into how you would configure this manually if you needed to.
 
 Open a browser to port 80 on the host where buildfarm is running.  You should see this:
 ![new jobs](/screenshots/create-new-jobs.png)
