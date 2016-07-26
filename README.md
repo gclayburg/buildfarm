@@ -24,7 +24,7 @@ $ cd buildfarm
 $ ./bounce.sh
 ```
 
-This will start the process of downloading, building and running all of the docker images that we need for BuildFarm.  There are 9 total images here, so this will take a while to finish.  While we are waiting, lets create a new development project that we can build with the BuildFarm once it is ready.  We will use the [JHipster](https://jhipster.github.io/) to create our project.  If you have not setup your system for JHipster, [follow those instructions first].  You could choose to create your development project on the same Linux box where you are running BuildFarm, but that isn't necessary.  It might be simpler for you to create the JHipster project on a laptop and run BuildFarm on a separate Linux server.
+This will start the process of downloading, building and running all of the docker images that we need for BuildFarm.  There are 8 total images here, so this will take a while to finish.  While we are waiting, lets create a new development project that we can build with the BuildFarm once it is ready.  We will use the [JHipster](https://jhipster.github.io/) to create our project.  If you have not setup your system for JHipster, [follow those instructions first].  You could choose to create your development project on the same Linux box where you are running BuildFarm, but that isn't necessary.  It might be simpler for you to create the JHipster project on a laptop and run BuildFarm on a separate Linux server.
 
 In a new terminal session on your development workstation, type:
 ```console
@@ -97,7 +97,7 @@ Click the build button for the `buildfarm1` job.  It should complete quickly wit
 ERROR: /var/jenkins_home/workspace/buildfarm1@script/Jenkinsfile not found
 Finished: FAILURE
 ```
-Oops, we haven't yet added a `Jenkinsfile` to our development project.  We need to add this so we can tell Jenkins exactly what steps are needed to build, test, package and run our application.  Copy the `Jenkinsfile` from the root of this project into your development directory and commit and push your changes:
+This build job in Jenkins is preconfigured to expect a `Jenkinsfile` in the root of our project.  We need to add this to tell Jenkins exactly what steps are needed to build, test, package and run our application.  Copy the `Jenkinsfile` from the root of this project into your development directory and commit and push your changes:
 ```console
 $ cp ../buildfarm/Jenkinsfile .
 $ git add Jenkinsfile && git commit -m "Initial Jenkinsfile" && git push origin master
@@ -120,7 +120,7 @@ To ssh://git@jefferson:2233/home/git/coderepo.git
 ```
 Note the message here `remote: Scheduled polling of buildfarm1`.  This means our git push has triggered a build of our buildfarm1 job in Jenkins.  For our purposes here, the other messages can be ignored.
 
-So with any luck your project is now building on Jenkins.  The Jenkinsfile we are using will build a production war file, run all the tests, and create and run a docker image of this app.  When the build finishes without errors you will find it running at on port 8080 on your Linux docker box - http://jefferson:8080 in my case.  The build runs the application based on your docker-compose definitions at `src/main/docker/app.yml`.  Now you can manually inpsect the production app
+So with any luck your project is now building on Jenkins.  The Jenkinsfile we are using will build a production war file, run all the tests, and create and run a docker image of this app.  When the build finishes without errors you will find it running at on port 8080 on your Linux docker box - http://jefferson:8080 in my case.  The build runs the application based on your docker-compose definitions at `src/main/docker/app.yml`.  Now you can manually inspect the production app.
 
 Of course, you will probably want to customize what your build does.  You might want to run some of the tests in parallel or deploy the app to a different server - or maybe somewhere in the cloud.  Who knows, maybe you need some further downstream integration testing against the running server.
 
