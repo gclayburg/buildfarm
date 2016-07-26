@@ -1,4 +1,4 @@
-FROM buildfarm_jenkinssuper
+FROM jenkins:1.651.3
 MAINTAINER Gary Clayburg
 
 # Prep Jenkins Directories
